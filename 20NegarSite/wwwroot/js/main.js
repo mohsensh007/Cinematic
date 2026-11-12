@@ -96,6 +96,7 @@
       }
     });
   } else {
+    lenis.start();
     heroIntro();
   }
 
@@ -173,7 +174,10 @@
   });
 
   document.querySelectorAll('[data-reveal]').forEach(function (el) {
-    if (window.matchMedia('(min-width: 881px)').matches && el.closest('.services')) return;
+    if (window.matchMedia('(min-width: 881px)').matches && (el.closest('.services') || el.closest('.why'))) {
+      gsap.set(el, { opacity: 1, y: 0 });
+      return;
+    }
     var delay = parseFloat(el.dataset.delay || 0);
     gsap.to(el, {
       opacity: 1, y: 0, duration: 1, delay: delay, ease: 'power3.out',
@@ -336,6 +340,40 @@
         0.55 + i * 0.95);
     });
     walkTl.to('.walk-stage', { y: -46, duration: 0.3, ease: 'power1.in' }, 4.15);
+  }
+
+  /* pinned why must be created AFTER walk: pin spacers shift later triggers'
+     start positions, so creation order has to match document order */
+  var why = document.querySelector('.why');
+  if (why && window.matchMedia('(min-width: 881px)').matches) {
+    var whyCards = gsap.utils.toArray('.why-card', why);
+    if (whyCards.length) {
+      var whyTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: why,
+          start: 'top top',
+          end: '+=' + (whyCards.length * 950),
+          scrub: 0.7,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true
+        }
+      });
+      whyCards.forEach(function (card, i) {
+        if (i > 0) {
+          whyTl.fromTo(card,
+            { y: function () { return window.innerHeight * 0.95; } },
+            { y: 0, duration: 0.8, ease: 'power2.out' },
+            (i - 1) * 0.9 + 0.1);
+          for (var j = 0; j < i; j++) {
+            whyTl.to(whyCards[j],
+              { scale: 1 - (i - j) * 0.05, y: -(i - j) * 44, duration: 0.45, ease: 'power1.inOut' },
+              (i - 1) * 0.9 + 0.4);
+          }
+        }
+      });
+      whyTl.to({}, { duration: 0.4 });
+    }
   }
 
   document.querySelectorAll('.faq-item').forEach(function (item) {

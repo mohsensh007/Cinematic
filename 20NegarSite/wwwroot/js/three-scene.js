@@ -94,12 +94,7 @@
   ];
 
   var WP_ICONS = [
-    iconTexture(function (g) {
-      g.font = '900 84px Georgia, "Times New Roman", serif';
-      g.textAlign = 'center';
-      g.textBaseline = 'middle';
-      g.fillText('W', 0, 4);
-    }),
+    canvasTex(function () {}, 160),
     iconTexture(function (g) {
       g.beginPath(); g.arc(0, 0, 36, 0, Math.PI * 2); g.stroke();
       g.beginPath(); g.ellipse(0, 0, 16, 36, 0, 0, Math.PI * 2); g.stroke();
@@ -135,23 +130,41 @@
     g.fillRect(0, 0, w, h);
   });
 
-  var wpFaceTex = canvasTex(function (g, w, h) {
-    var grad = g.createRadialGradient(w * 0.35, h * 0.3, 10, w / 2, h / 2, w * 0.62);
-    grad.addColorStop(0, '#3f97c2');
-    grad.addColorStop(1, '#123f5e');
-    g.fillStyle = grad;
-    g.fillRect(0, 0, w, h);
-    g.strokeStyle = 'rgba(255,255,255,.95)';
-    g.lineWidth = w * 0.04;
-    g.beginPath(); g.arc(w / 2, h / 2, w * 0.4, 0, Math.PI * 2); g.stroke();
-    g.fillStyle = '#fff';
-    g.font = '900 ' + (w * 0.5) + 'px Georgia, "Times New Roman", serif';
-    g.textAlign = 'center';
-    g.textBaseline = 'middle';
-    g.fillText('W', w / 2, h * 0.55);
-  });
+  /* official WordPress mark; cap UVs + texture rotation verified upright via render probe */
+  var wpFaceCanvas = document.createElement('canvas');
+  wpFaceCanvas.width = wpFaceCanvas.height = 512;
+  var wpFaceTex = new THREE.CanvasTexture(wpFaceCanvas);
+  wpFaceTex.anisotropy = 4;
+  wpFaceTex.colorSpace = THREE.SRGBColorSpace;
+  function drawWpFace(img) {
+    var g = wpFaceCanvas.getContext('2d');
+    var w = wpFaceCanvas.width, h = wpFaceCanvas.height;
+    g.clearRect(0, 0, w, h);
+    if (img) {
+      g.drawImage(img, 0, 0, w, h);
+    } else {
+      var grad = g.createRadialGradient(w * 0.35, h * 0.3, 10, w / 2, h / 2, w * 0.62);
+      grad.addColorStop(0, '#3f97c2');
+      grad.addColorStop(1, '#123f5e');
+      g.fillStyle = grad;
+      g.fillRect(0, 0, w, h);
+    }
+    wpFaceTex.needsUpdate = true;
+  }
+  drawWpFace(null);
+  var wpMark = new Image();
+  wpMark.onload = function () {
+    drawWpFace(wpMark);
+    var ic = WP_ICONS[0].image;
+    var g = ic.getContext('2d');
+    g.clearRect(0, 0, ic.width, ic.height);
+    g.drawImage(wpMark, 6, 6, ic.width - 12, ic.height - 12);
+    WP_ICONS[0].colorSpace = THREE.SRGBColorSpace;
+    WP_ICONS[0].needsUpdate = true;
+  };
+  wpMark.src = 'img/wordpress-logo.png';
   wpFaceTex.center.set(0.5, 0.5);
-  wpFaceTex.rotation = -Math.PI / 2;
+  wpFaceTex.rotation = Math.PI / 2;
 
   var glowTex = canvasTex(function (g, w, h) {
     var grad = g.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w / 2);
@@ -339,9 +352,8 @@
 
   function applySpin() { spinG.rotation.y = spinProxy.y * Math.PI / 180; }
   function applyBlur() {
-    var f = 'blur(' + blurProxy.v.toFixed(2) + 'px) saturate(' + (1 + blurProxy.v / 18).toFixed(2) + ')';
+    var f = 'blur(' + blurProxy.v.toFixed(2) + 'px) saturate(' + (1 + blurProxy.v / 14).toFixed(2) + ')';
     bgCanvas.style.filter = f;
-    if (fgCanvas) fgCanvas.style.filter = f;
   }
   function shuffleIcons(set) {
     currentSet = set;
@@ -360,11 +372,9 @@
     igLogo.visible = !wp;
     wpLogo.visible = wp;
     shuffleIcons(wp ? WP_ICONS : IG_ICONS);
+    document.body.classList.toggle('theme-wordpress', wp);
+    document.body.classList.toggle('theme-instagram', !wp);
     var T = THEMES[wp ? 'wordpress' : 'instagram'];
-    gsap.to(document.body, {
-      '--bg-inner': T.inner, '--bg-mid': T.mid, '--bg-outer': T.outer,
-      duration: 1.2, ease: 'power2.inOut', overwrite: 'auto'
-    });
     var g1 = document.querySelector('.glow-1');
     var g2 = document.querySelector('.glow-2');
     if (g1) gsap.to(g1, { backgroundColor: T.g1, duration: 1, ease: 'power2.inOut', overwrite: 'auto' });
@@ -397,7 +407,7 @@
       .to(logoRoot.scale, { x: 1.14, y: 1.14, z: 1.14, duration: 0.24, ease: 'power1.inOut' }, 0)
       .to('.hero-content', { y: -50, duration: 0.24, ease: 'none' }, 0)
       .to(spinProxy, { y: '+=360', duration: 0.17, ease: 'power2.in', onUpdate: applySpin }, 0.25)
-      .to(blurProxy, { v: 14, duration: 0.15, ease: 'power2.in', onUpdate: applyBlur }, 0.27)
+      .to(blurProxy, { v: 10, duration: 0.15, ease: 'power2.in', onUpdate: applyBlur }, 0.27)
       .to(iconScale, { v: 0.02, duration: 0.15, ease: 'power2.in' }, 0.27)
       .to(spinProxy, { y: '+=360', duration: 0.3, ease: 'power2.out', onUpdate: applySpin }, 0.42)
       .to(iconScale, { v: 1, duration: 0.22, ease: 'back.out(1.7)' }, 0.44)
