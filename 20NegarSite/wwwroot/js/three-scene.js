@@ -33,9 +33,10 @@
   }
 
   /* ---------- canvas textures ---------- */
-  function canvasTex(draw, size) {
+  function canvasTex(draw, size, height) {
     var c = document.createElement('canvas');
-    c.width = c.height = size || 256;
+    c.width = size || 256;
+    c.height = height || size || 256;
     var g = c.getContext('2d');
     draw(g, c.width, c.height);
     var t = new THREE.CanvasTexture(c);
@@ -120,6 +121,42 @@
     })
   ];
 
+  var BB_ICONS = [
+    iconTexture(function (g) {
+      g.beginPath();
+      g.moveTo(-38, -12); g.lineTo(-38, 12); g.lineTo(-8, 12);
+      g.lineTo(34, 36); g.lineTo(34, -36); g.lineTo(-8, -12); g.closePath();
+      g.stroke();
+      g.beginPath();
+      g.moveTo(-26, 14); g.lineTo(-26, 38); g.lineTo(-8, 38); g.lineTo(-8, 14);
+      g.stroke();
+    }),
+    iconTexture(function (g) {
+      g.strokeRect(-44, -36, 88, 50);
+      g.beginPath();
+      g.moveTo(-18, 14); g.lineTo(-18, 42);
+      g.moveTo(18, 14); g.lineTo(18, 42);
+      g.stroke();
+      g.beginPath(); g.moveTo(-30, -22); g.lineTo(30, -22); g.stroke();
+    }),
+    iconTexture(function (g) {
+      g.beginPath();
+      g.moveTo(0, 44);
+      g.bezierCurveTo(-36, 6, -26, -40, 0, -40);
+      g.bezierCurveTo(26, -40, 36, 6, 0, 44);
+      g.stroke();
+      g.beginPath(); g.arc(0, -12, 10, 0, Math.PI * 2); g.stroke();
+    }),
+    iconTexture(function (g) {
+      g.beginPath();
+      g.moveTo(-44, 0);
+      g.quadraticCurveTo(0, -42, 44, 0);
+      g.quadraticCurveTo(0, 42, -44, 0);
+      g.stroke();
+      g.beginPath(); g.arc(0, 0, 12, 0, Math.PI * 2); g.stroke();
+    })
+  ];
+
   var igFaceTex = canvasTex(function (g, w, h) {
     var grad = g.createLinearGradient(0, h, w, 0);
     grad.addColorStop(0, '#ffd600');
@@ -165,6 +202,77 @@
   wpMark.src = 'img/wordpress-logo.png';
   wpFaceTex.center.set(0.5, 0.5);
   wpFaceTex.rotation = Math.PI / 2;
+
+  var bbFaceTex = canvasTex(function (g, w, h) {
+    var grad = g.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, '#1b0d16');
+    grad.addColorStop(0.55, '#12060e');
+    grad.addColorStop(1, '#080409');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, w, h);
+    var rg = g.createRadialGradient(w * 0.5, h * 0.46, 20, w * 0.5, h * 0.5, w * 0.52);
+    rg.addColorStop(0, 'rgba(255,36,64,.34)');
+    rg.addColorStop(1, 'rgba(255,36,64,0)');
+    g.fillStyle = rg;
+    g.fillRect(0, 0, w, h);
+    g.save();
+    g.globalAlpha = 0.05;
+    g.fillStyle = '#ffffff';
+    g.beginPath(); g.moveTo(w * 0.12, 0); g.lineTo(w * 0.3, 0); g.lineTo(w * 0.06, h); g.lineTo(-w * 0.12, h); g.closePath(); g.fill();
+    g.beginPath(); g.moveTo(w * 0.38, 0); g.lineTo(w * 0.44, 0); g.lineTo(w * 0.2, h); g.lineTo(w * 0.14, h); g.closePath(); g.fill();
+    g.restore();
+    g.strokeStyle = 'rgba(255,255,255,.8)';
+    g.lineWidth = 6;
+    g.strokeRect(24, 24, w - 48, h - 48);
+    g.strokeStyle = 'rgba(255,36,64,.85)';
+    g.lineWidth = 3;
+    g.strokeRect(44, 44, w - 88, h - 88);
+    var fs = h * 0.42;
+    g.textBaseline = 'middle';
+    g.textAlign = 'left';
+    g.font = '900 ' + fs + 'px Arial, sans-serif';
+    var gap = fs * 0.06;
+    var w20 = g.measureText('20').width;
+    var wn = g.measureText('NEGAR').width;
+    var maxW = w - 2 * (h * 0.16);
+    var total = w20 + wn + gap;
+    if (total > maxW) {
+      fs = fs * maxW / total;
+      g.font = '900 ' + fs + 'px Arial, sans-serif';
+      gap = fs * 0.06;
+      w20 = g.measureText('20').width;
+      wn = g.measureText('NEGAR').width;
+      total = w20 + wn + gap;
+    }
+    var x0 = (w - total) / 2;
+    g.shadowColor = 'rgba(255,36,64,.9)';
+    g.shadowBlur = fs * 0.18;
+    g.fillStyle = '#ff2440';
+    g.fillText('20', x0, h * 0.46);
+    g.shadowColor = 'rgba(255,255,255,.45)';
+    g.shadowBlur = fs * 0.1;
+    g.fillStyle = '#ffffff';
+    g.fillText('NEGAR', x0 + w20 + gap, h * 0.46);
+    g.shadowBlur = 0;
+    var bw = total * 0.32;
+    g.shadowColor = 'rgba(255,36,64,.8)';
+    g.shadowBlur = 18;
+    g.fillStyle = '#ff2440';
+    g.fillRect((w - bw) / 2, h * 0.65, bw, h * 0.012);
+    g.shadowBlur = 0;
+    var cs = h * 0.058;
+    g.font = '700 ' + cs + 'px Arial, sans-serif';
+    g.textAlign = 'center';
+    g.fillStyle = 'rgba(255,255,255,.75)';
+    var cap = 'A D V E R T I S I N G   A G E N C Y';
+    var cw = g.measureText(cap).width;
+    if (cw > w - 2 * (h * 0.16)) {
+      cs = cs * (w - 2 * (h * 0.16)) / cw;
+      g.font = '700 ' + cs + 'px Arial, sans-serif';
+    }
+    g.fillText(cap, w / 2, h * 0.79);
+  }, 1024, 640);
+  bbFaceTex.colorSpace = THREE.SRGBColorSpace;
 
   var glowTex = canvasTex(function (g, w, h) {
     var grad = g.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w / 2);
@@ -231,6 +339,56 @@
   wpLogo.add(wpRing);
   wpLogo.scale.setScalar(1.9);
 
+  var bbLogo = new THREE.Group();
+  var bbMetal = new THREE.MeshBasicMaterial({ color: 0x241a20 });
+  var bbDark = new THREE.MeshBasicMaterial({ color: 0x120b10 });
+  var bbBack = new THREE.MeshBasicMaterial({ color: 0x0d0709 });
+  var bbRed = new THREE.MeshBasicMaterial({ color: 0xff2440 });
+  var bbBoard = new THREE.Mesh(
+    new THREE.BoxGeometry(3.1, 1.94, 0.16),
+    [bbDark, bbDark, bbDark, bbDark,
+     new THREE.MeshBasicMaterial({ map: bbFaceTex }), bbBack]
+  );
+  bbLogo.add(bbBoard);
+  var bbFrame = new THREE.Mesh(new THREE.BoxGeometry(3.34, 2.16, 0.12), bbMetal);
+  bbFrame.position.z = -0.06;
+  bbLogo.add(bbFrame);
+  var bbStrip = new THREE.Mesh(new THREE.BoxGeometry(3.34, 0.05, 0.13), bbRed);
+  bbStrip.position.set(0, -1.09, -0.05);
+  bbLogo.add(bbStrip);
+  [-1.05, 1.05].forEach(function (x) {
+    var leg = new THREE.Mesh(new THREE.BoxGeometry(0.13, 1.5, 0.13), bbMetal);
+    leg.position.set(x, -1.78, -0.03);
+    bbLogo.add(leg);
+  });
+  var bbBar = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.09, 0.09), bbMetal);
+  bbBar.position.set(0, -2.2, -0.03);
+  bbLogo.add(bbBar);
+  var bbLampBar = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.06, 0.06), bbMetal);
+  bbLampBar.position.set(0, 1.28, 0.28);
+  bbLogo.add(bbLampBar);
+  [-1.0, 0, 1.0].forEach(function (x) {
+    var arm = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.045, 0.5), bbMetal);
+    arm.position.set(x, 1.28, 0.06);
+    bbLogo.add(arm);
+    var lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.13, 0.16, 16), bbDark);
+    lamp.rotation.x = -0.5;
+    lamp.position.set(x, 1.24, 0.32);
+    bbLogo.add(lamp);
+    var bulb = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12),
+      new THREE.MeshBasicMaterial({ color: 0xfff2d0 }));
+    bulb.position.set(x, 1.18, 0.36);
+    bbLogo.add(bulb);
+    var glow = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: glowTex, transparent: true, opacity: 0.55,
+      blending: THREE.AdditiveBlending, depthWrite: false, color: 0xffd9a0
+    }));
+    glow.scale.set(0.7, 0.7, 1);
+    glow.position.set(x, 1.16, 0.4);
+    bbLogo.add(glow);
+  });
+  bbLogo.scale.setScalar(1.15);
+
   var logoRoot = new THREE.Group();
   scene.add(logoRoot);
   var tiltG = new THREE.Group();
@@ -239,7 +397,9 @@
   tiltG.add(spinG);
   spinG.add(igLogo);
   spinG.add(wpLogo);
+  spinG.add(bbLogo);
   wpLogo.visible = false;
+  bbLogo.visible = false;
 
   var logoGlow = new THREE.Sprite(new THREE.SpriteMaterial({
     map: glowTex, transparent: true, opacity: 0.5, depthWrite: false
@@ -347,6 +507,10 @@
     wordpress: {
       inner: '#0d3a5c', mid: '#07203a', outer: '#03070d',
       g1: 'rgba(46,140,200,.16)', g2: 'rgba(90,190,225,.11)'
+    },
+    billboard: {
+      inner: '#420c18', mid: '#20050d', outer: '#0b0205',
+      g1: 'rgba(255,36,64,.17)', g2: 'rgba(255,120,70,.12)'
     }
   };
 
@@ -368,13 +532,15 @@
     });
   }
 
-  function applyFlavorState(wp) {
-    igLogo.visible = !wp;
-    wpLogo.visible = wp;
-    shuffleIcons(wp ? WP_ICONS : IG_ICONS);
-    document.body.classList.toggle('theme-wordpress', wp);
-    document.body.classList.toggle('theme-instagram', !wp);
-    var T = THEMES[wp ? 'wordpress' : 'instagram'];
+  function applyFlavorState(flavor) {
+    igLogo.visible = flavor === 'instagram';
+    wpLogo.visible = flavor === 'wordpress';
+    bbLogo.visible = flavor === 'billboard';
+    shuffleIcons(flavor === 'instagram' ? IG_ICONS : flavor === 'wordpress' ? WP_ICONS : BB_ICONS);
+    document.body.classList.toggle('theme-wordpress', flavor === 'wordpress');
+    document.body.classList.toggle('theme-instagram', flavor === 'instagram');
+    document.body.classList.toggle('theme-billboard', flavor === 'billboard');
+    var T = THEMES[flavor];
     var g1 = document.querySelector('.glow-1');
     var g2 = document.querySelector('.glow-2');
     if (g1) gsap.to(g1, { backgroundColor: T.g1, duration: 1, ease: 'power2.inOut', overwrite: 'auto' });
@@ -385,36 +551,42 @@
   var hasHero = !!document.querySelector('.hero');
   if (hasHero && window.gsap && window.ScrollTrigger && window.matchMedia('(min-width: 881px)').matches) {
     gsap.registerPlugin(ScrollTrigger);
-    var flipped = false;
+    var flipped = 'instagram';
     gsap.timeline({
       scrollTrigger: {
         trigger: '.hero',
         start: 'top top',
-        end: '+=2600',
+        end: '+=3400',
         scrub: 0.7,
         pin: true,
         anticipatePin: 1,
         onUpdate: function (self) {
-          var wp = self.progress > 0.42;
-          if (wp !== flipped) {
-            flipped = wp;
-            applyFlavorState(wp);
-            try { window.dispatchEvent(new CustomEvent('flavorchange', { detail: wp ? 'wordpress' : 'instagram' })); } catch (e) {}
+          var f = self.progress > 0.74 ? 'billboard' : self.progress > 0.36 ? 'wordpress' : 'instagram';
+          if (f !== flipped) {
+            flipped = f;
+            applyFlavorState(f);
+            try { window.dispatchEvent(new CustomEvent('flavorchange', { detail: f })); } catch (e) {}
           }
         }
       }
     })
-      .to(logoRoot.scale, { x: 1.14, y: 1.14, z: 1.14, duration: 0.24, ease: 'power1.inOut' }, 0)
-      .to('.hero-content', { y: -50, duration: 0.24, ease: 'none' }, 0)
-      .to(spinProxy, { y: '+=360', duration: 0.17, ease: 'power2.in', onUpdate: applySpin }, 0.25)
-      .to(blurProxy, { v: 10, duration: 0.15, ease: 'power2.in', onUpdate: applyBlur }, 0.27)
-      .to(iconScale, { v: 0.02, duration: 0.15, ease: 'power2.in' }, 0.27)
-      .to(spinProxy, { y: '+=360', duration: 0.3, ease: 'power2.out', onUpdate: applySpin }, 0.42)
-      .to(iconScale, { v: 1, duration: 0.22, ease: 'back.out(1.7)' }, 0.44)
-      .to(blurProxy, { v: 0, duration: 0.2, ease: 'power2.out', onUpdate: applyBlur }, 0.44)
-      .to({}, { duration: 0.14 }, 0.66)
-      .to('.hero-content', { y: 90, autoAlpha: 0.15, duration: 0.18, ease: 'power1.in' }, 0.8)
-      .to(exitP, { y: -6.5, f: 1, duration: 0.2, ease: 'power1.in' }, 0.8);
+      .to(logoRoot.scale, { x: 1.14, y: 1.14, z: 1.14, duration: 0.2, ease: 'power1.inOut' }, 0)
+      .to('.hero-content', { y: -50, duration: 0.2, ease: 'none' }, 0)
+      .to(spinProxy, { y: '+=360', duration: 0.16, ease: 'power2.in', onUpdate: applySpin }, 0.2)
+      .to(blurProxy, { v: 10, duration: 0.14, ease: 'power2.in', onUpdate: applyBlur }, 0.22)
+      .to(iconScale, { v: 0.02, duration: 0.14, ease: 'power2.in' }, 0.22)
+      .to(spinProxy, { y: '+=360', duration: 0.2, ease: 'power2.out', onUpdate: applySpin }, 0.36)
+      .to(iconScale, { v: 1, duration: 0.18, ease: 'back.out(1.7)' }, 0.38)
+      .to(blurProxy, { v: 0, duration: 0.16, ease: 'power2.out', onUpdate: applyBlur }, 0.38)
+      .to({}, { duration: 0.06 }, 0.56)
+      .to(spinProxy, { y: '+=360', duration: 0.12, ease: 'power2.in', onUpdate: applySpin }, 0.62)
+      .to(blurProxy, { v: 10, duration: 0.1, ease: 'power2.in', onUpdate: applyBlur }, 0.63)
+      .to(iconScale, { v: 0.02, duration: 0.1, ease: 'power2.in' }, 0.63)
+      .to(spinProxy, { y: '+=360', duration: 0.16, ease: 'power2.out', onUpdate: applySpin }, 0.74)
+      .to(iconScale, { v: 1, duration: 0.14, ease: 'back.out(1.7)' }, 0.76)
+      .to(blurProxy, { v: 0, duration: 0.12, ease: 'power2.out', onUpdate: applyBlur }, 0.76)
+      .to('.hero-content', { y: 90, autoAlpha: 0.15, duration: 0.12, ease: 'power1.in' }, 0.88)
+      .to(exitP, { y: -6.5, f: 1, duration: 0.12, ease: 'power1.in' }, 0.88);
   }
 
   /* ---------- resize & scroll ---------- */

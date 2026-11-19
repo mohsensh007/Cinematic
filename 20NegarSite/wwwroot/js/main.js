@@ -172,7 +172,7 @@
       card.style.transform = 'perspective(900px) rotateX(0) rotateY(0) translateY(0)';
     });
   });
-
+  
   document.querySelectorAll('[data-reveal]').forEach(function (el) {
     if (window.matchMedia('(min-width: 881px)').matches && (el.closest('.services') || el.closest('.why'))) {
       gsap.set(el, { opacity: 1, y: 0 });
