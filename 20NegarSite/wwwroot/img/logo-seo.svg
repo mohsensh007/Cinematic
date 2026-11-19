@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#12233a"/>
+      <stop offset="0.55" stop-color="#0a1524"/>
+      <stop offset="1" stop-color="#050a13"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.46" r="0.6">
+      <stop offset="0" stop-color="#42a5f5" stop-opacity="0.22"/>
+      <stop offset="0.55" stop-color="#43a047" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <rect width="400" height="400" fill="url(#halo)"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="96" dominant-baseline="middle">
+    <text x="34" y="204" fill="#3b82f6">S</text>
+    <text x="100" y="204" fill="#ffc21a">E</text>
+  </g>
+  <g stroke-linecap="round">
+    <path d="M236 214 L286 264" stroke="#37474f" stroke-width="24"/>
+    <path d="M240 206 L286 252" stroke="#546e7a" stroke-width="8"/>
+    <circle cx="200" cy="160" r="54" fill="none" stroke="#e53935" stroke-width="17"/>
+    <path d="M174 174 L193 155 L204 166 L224 143" fill="none" stroke="#43a047" stroke-width="11" stroke-linejoin="round"/>
+    <path d="M224 143 L215.5 148 L219 156 Z" fill="#43a047"/>
+  </g>
+</svg>

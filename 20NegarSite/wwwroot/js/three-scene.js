@@ -157,6 +157,33 @@
     })
   ];
 
+  var SEO_ICONS = [
+    iconTexture(function (g) {
+      g.beginPath(); g.arc(-4, -4, 30, 0, Math.PI * 2); g.stroke();
+      g.beginPath(); g.moveTo(18, 18); g.lineTo(40, 40); g.stroke();
+      g.beginPath(); g.moveTo(-20, -2); g.lineTo(-8, -14); g.lineTo(2, -4); g.lineTo(16, -20); g.stroke();
+    }),
+    iconTexture(function (g) {
+      [-24, 0, 24].forEach(function (x, i) {
+        g.beginPath();
+        g.rect(x - 9, 24 - (i + 1) * 20, 18, (i + 1) * 20);
+        g.stroke();
+      });
+      g.beginPath(); g.moveTo(-38, -34); g.lineTo(38, -34); g.stroke();
+    }),
+    iconTexture(function (g) {
+      g.beginPath(); g.moveTo(0, 38); g.lineTo(0, -26); g.stroke();
+      g.beginPath(); g.moveTo(-22, -6); g.lineTo(0, -30); g.lineTo(22, -6); g.stroke();
+    }),
+    iconTexture(function (g) {
+      g.beginPath(); g.arc(0, 0, 34, 0, Math.PI * 2); g.stroke();
+      g.beginPath(); g.ellipse(0, 0, 15, 34, 0, 0, Math.PI * 2); g.stroke();
+      g.beginPath(); g.moveTo(-34, 0); g.lineTo(34, 0); g.stroke();
+      g.beginPath(); g.moveTo(-29, -17); g.lineTo(29, -17); g.stroke();
+      g.beginPath(); g.moveTo(-29, 17); g.lineTo(29, 17); g.stroke();
+    })
+  ];
+
   var igFaceTex = canvasTex(function (g, w, h) {
     var grad = g.createLinearGradient(0, h, w, 0);
     grad.addColorStop(0, '#ffd600');
@@ -274,6 +301,100 @@
   }, 1024, 640);
   bbFaceTex.colorSpace = THREE.SRGBColorSpace;
 
+  /* SEO wordmark face: blue S, yellow E, red magnifier O, green growth arrow */
+  var SEO_FACE = 1024;
+  var SEO_C = { o: null, handle: 0, start: 0 };
+  var seoFaceTex = canvasTex(function (g, w, h) {
+    var grad = g.createLinearGradient(0, 0, w * 0.65, h);
+    grad.addColorStop(0, '#12233a');
+    grad.addColorStop(0.55, '#0a1524');
+    grad.addColorStop(1, '#050a13');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, w, h);
+
+    var rg = g.createRadialGradient(w * 0.5, h * 0.46, 30, w * 0.5, h * 0.5, w * 0.66);
+    rg.addColorStop(0, 'rgba(66,165,245,.22)');
+    rg.addColorStop(0.55, 'rgba(67,160,71,.10)');
+    rg.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = rg;
+    g.fillRect(0, 0, w, h);
+
+    var fs = w * 0.29;
+    var font = '900 ' + fs + 'px Arial, sans-serif';
+    g.font = font;
+    g.textBaseline = 'middle';
+    g.textAlign = 'left';
+    var wS = g.measureText('S').width;
+    var wE = g.measureText('E').width;
+    var gap = fs * 0.11;
+    var r = fs * 0.56;
+    var cy = h * 0.47;
+    var total = wS + gap + wE + gap * 1.25 + r * 2;
+    var x0 = (w - total) / 2 - w * 0.03;
+    var cx = x0 + wS + gap + wE + gap * 1.25 + r;
+
+    g.shadowColor = 'rgba(0,0,0,.6)';
+    g.shadowBlur = 26;
+    g.shadowOffsetY = 12;
+    g.fillStyle = '#3b82f6';
+    g.fillText('S', x0, cy);
+    g.fillStyle = '#ffc21a';
+    g.fillText('E', x0 + wS + gap, cy);
+    g.shadowColor = 'transparent';
+    g.shadowBlur = 0;
+    g.shadowOffsetY = 0;
+
+    var ang = Math.PI / 4;
+    var hx = cx + Math.cos(ang) * r * 0.92;
+    var hy = cy + Math.sin(ang) * r * 0.92;
+    var hlen = fs * 0.62;
+    var hx2 = hx + Math.cos(ang) * hlen;
+    var hy2 = hy + Math.sin(ang) * hlen;
+    g.lineCap = 'round';
+    g.strokeStyle = '#37474f';
+    g.lineWidth = fs * 0.2;
+    g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx2, hy2); g.stroke();
+    g.strokeStyle = '#546e7a';
+    g.lineWidth = fs * 0.07;
+    g.beginPath();
+    g.moveTo(hx + fs * 0.02, hy + fs * 0.02);
+    g.lineTo(hx2 - fs * 0.02, hy2 - fs * 0.02);
+    g.stroke();
+
+    g.strokeStyle = '#e53935';
+    g.lineWidth = fs * 0.155;
+    g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke();
+
+    g.strokeStyle = '#43a047';
+    g.fillStyle = '#43a047';
+    g.lineWidth = fs * 0.095;
+    g.lineJoin = 'round';
+    g.beginPath();
+    g.moveTo(cx - fs * 0.24, cy + fs * 0.15);
+    g.lineTo(cx - fs * 0.03, cy - fs * 0.07);
+    g.lineTo(cx + fs * 0.07, cy + fs * 0.04);
+    g.lineTo(cx + fs * 0.3, cy - fs * 0.22);
+    g.stroke();
+    var ax = cx + fs * 0.3, ay = cy - fs * 0.22, hs = fs * 0.13;
+    g.beginPath();
+    g.moveTo(ax, ay);
+    g.lineTo(ax - hs, ay + hs * 0.22);
+    g.lineTo(ax - hs * 0.22, ay + hs);
+    g.closePath();
+    g.fill();
+
+    var gl = g.createLinearGradient(0, 0, w * 0.5, h * 0.55);
+    gl.addColorStop(0, 'rgba(255,255,255,.10)');
+    gl.addColorStop(0.6, 'rgba(255,255,255,0)');
+    g.fillStyle = gl;
+    g.fillRect(0, 0, w, h);
+
+    SEO_C.o = { cx: cx, cy: cy, r: r };
+    SEO_C.handle = hlen;
+    SEO_C.start = { x: hx, y: hy };
+  }, SEO_FACE, SEO_FACE);
+  seoFaceTex.colorSpace = THREE.SRGBColorSpace;
+
   var glowTex = canvasTex(function (g, w, h) {
     var grad = g.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w / 2);
     grad.addColorStop(0, 'rgba(255,120,170,.55)');
@@ -389,6 +510,63 @@
   });
   bbLogo.scale.setScalar(1.15);
 
+  var seoLogo = new THREE.Group();
+  var SEO_TILE = 2.3;
+  var seoShape = roundedRectShape(SEO_TILE, SEO_TILE, 0.5);
+  seoFaceTex.wrapS = seoFaceTex.wrapT = THREE.ClampToEdgeWrapping;
+  seoFaceTex.repeat.set(1 / SEO_TILE, 1 / SEO_TILE);
+  seoFaceTex.offset.set(0.5, 0.5);
+  var seoBodyGeo = new THREE.ExtrudeGeometry(seoShape, {
+    depth: 0.3, bevelEnabled: true, bevelThickness: 0.07, bevelSize: 0.07,
+    bevelSegments: 4, curveSegments: 24
+  });
+  seoBodyGeo.center();
+  var seoBody = new THREE.Mesh(seoBodyGeo, [
+    new THREE.MeshBasicMaterial({ map: seoFaceTex }),
+    new THREE.MeshBasicMaterial({ color: 0x14375c })
+  ]);
+  seoLogo.add(seoBody);
+  /* rounded plate that follows the tile corners all the way round */
+  var seoPlateShape = roundedRectShape(SEO_TILE + 0.2, SEO_TILE + 0.2, 0.56);
+  seoPlateShape.holes.push(roundedRectShape(SEO_TILE - 0.02, SEO_TILE - 0.02, 0.5));
+  var seoPlateGeo = new THREE.ExtrudeGeometry(seoPlateShape, {
+    depth: 0.12, bevelEnabled: false, curveSegments: 24
+  });
+  seoPlateGeo.center();
+  var seoPlate = new THREE.Mesh(seoPlateGeo, new THREE.MeshBasicMaterial({ color: 0x0a1a2c }));
+  seoPlate.position.z = 0.02;
+  seoLogo.add(seoPlate);
+  var seoAccent = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2, 0.09, 0.13),
+    new THREE.MeshBasicMaterial({ color: 0x43a047 })
+  );
+  seoAccent.position.set(0, -(SEO_TILE / 2 + 0.05), 0.02);
+  seoLogo.add(seoAccent);
+
+  /* raised magnifier ring and handle over the O */
+  var px2w = function (px) { return (px / SEO_FACE - 0.5) * SEO_TILE; };
+  var py2w = function (py) { return (0.5 - py / SEO_FACE) * SEO_TILE; };
+  var seoO = SEO_C.o;
+  var seoOx = px2w(seoO.cx), seoOy = py2w(seoO.cy);
+  var seoOr = (seoO.r / SEO_FACE) * SEO_TILE;
+  var seoRing3 = new THREE.Mesh(
+    new THREE.TorusGeometry(seoOr, 0.045, 12, 64),
+    new THREE.MeshBasicMaterial({ color: 0xe53935 })
+  );
+  seoRing3.position.set(seoOx, seoOy, 0.24);
+  seoLogo.add(seoRing3);
+  var seoDir = { x: Math.cos(Math.PI / 4), y: -Math.sin(Math.PI / 4) };
+  var seoHx = px2w(SEO_C.start.x), seoHy = py2w(SEO_C.start.y);
+  var seoHlen = (SEO_C.handle / SEO_FACE) * SEO_TILE;
+  var seoHandle = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.06, 0.06, seoHlen, 16),
+    new THREE.MeshBasicMaterial({ color: 0x37474f })
+  );
+  seoHandle.position.set(seoHx + seoDir.x * seoHlen / 2, seoHy + seoDir.y * seoHlen / 2, 0.24);
+  seoHandle.rotation.z = Math.PI * 1.25;
+  seoLogo.add(seoHandle);
+  seoLogo.scale.setScalar(1.8);
+
   var logoRoot = new THREE.Group();
   scene.add(logoRoot);
   var tiltG = new THREE.Group();
@@ -397,8 +575,10 @@
   tiltG.add(spinG);
   spinG.add(igLogo);
   spinG.add(wpLogo);
+  spinG.add(seoLogo);
   spinG.add(bbLogo);
   wpLogo.visible = false;
+  seoLogo.visible = false;
   bbLogo.visible = false;
 
   var logoGlow = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -508,6 +688,10 @@
       inner: '#0d3a5c', mid: '#07203a', outer: '#03070d',
       g1: 'rgba(46,140,200,.16)', g2: 'rgba(90,190,225,.11)'
     },
+    seo: {
+      inner: '#0a2f45', mid: '#05141f', outer: '#02070c',
+      g1: 'rgba(66,165,245,.17)', g2: 'rgba(67,160,71,.13)'
+    },
     billboard: {
       inner: '#420c18', mid: '#20050d', outer: '#0b0205',
       g1: 'rgba(255,36,64,.17)', g2: 'rgba(255,120,70,.12)'
@@ -535,10 +719,12 @@
   function applyFlavorState(flavor) {
     igLogo.visible = flavor === 'instagram';
     wpLogo.visible = flavor === 'wordpress';
+    seoLogo.visible = flavor === 'seo';
     bbLogo.visible = flavor === 'billboard';
-    shuffleIcons(flavor === 'instagram' ? IG_ICONS : flavor === 'wordpress' ? WP_ICONS : BB_ICONS);
+    shuffleIcons(flavor === 'instagram' ? IG_ICONS : flavor === 'wordpress' ? WP_ICONS : flavor === 'seo' ? SEO_ICONS : BB_ICONS);
     document.body.classList.toggle('theme-wordpress', flavor === 'wordpress');
     document.body.classList.toggle('theme-instagram', flavor === 'instagram');
+    document.body.classList.toggle('theme-seo', flavor === 'seo');
     document.body.classList.toggle('theme-billboard', flavor === 'billboard');
     var T = THEMES[flavor];
     var g1 = document.querySelector('.glow-1');
@@ -556,12 +742,12 @@
       scrollTrigger: {
         trigger: '.hero',
         start: 'top top',
-        end: '+=3400',
+        end: '+=4000',
         scrub: 0.7,
         pin: true,
         anticipatePin: 1,
         onUpdate: function (self) {
-          var f = self.progress > 0.74 ? 'billboard' : self.progress > 0.36 ? 'wordpress' : 'instagram';
+          var f = self.progress > 0.805 ? 'billboard' : self.progress > 0.525 ? 'seo' : self.progress > 0.245 ? 'wordpress' : 'instagram';
           if (f !== flipped) {
             flipped = f;
             applyFlavorState(f);
@@ -572,21 +758,29 @@
     })
       .to(logoRoot.scale, { x: 1.14, y: 1.14, z: 1.14, duration: 0.2, ease: 'power1.inOut' }, 0)
       .to('.hero-content', { y: -50, duration: 0.2, ease: 'none' }, 0)
-      .to(spinProxy, { y: '+=360', duration: 0.16, ease: 'power2.in', onUpdate: applySpin }, 0.2)
-      .to(blurProxy, { v: 10, duration: 0.14, ease: 'power2.in', onUpdate: applyBlur }, 0.22)
-      .to(iconScale, { v: 0.02, duration: 0.14, ease: 'power2.in' }, 0.22)
-      .to(spinProxy, { y: '+=360', duration: 0.2, ease: 'power2.out', onUpdate: applySpin }, 0.36)
-      .to(iconScale, { v: 1, duration: 0.18, ease: 'back.out(1.7)' }, 0.38)
-      .to(blurProxy, { v: 0, duration: 0.16, ease: 'power2.out', onUpdate: applyBlur }, 0.38)
-      .to({}, { duration: 0.06 }, 0.56)
-      .to(spinProxy, { y: '+=360', duration: 0.12, ease: 'power2.in', onUpdate: applySpin }, 0.62)
-      .to(blurProxy, { v: 10, duration: 0.1, ease: 'power2.in', onUpdate: applyBlur }, 0.63)
-      .to(iconScale, { v: 0.02, duration: 0.1, ease: 'power2.in' }, 0.63)
-      .to(spinProxy, { y: '+=360', duration: 0.16, ease: 'power2.out', onUpdate: applySpin }, 0.74)
-      .to(iconScale, { v: 1, duration: 0.14, ease: 'back.out(1.7)' }, 0.76)
-      .to(blurProxy, { v: 0, duration: 0.12, ease: 'power2.out', onUpdate: applyBlur }, 0.76)
-      .to('.hero-content', { y: 90, autoAlpha: 0.15, duration: 0.12, ease: 'power1.in' }, 0.88)
-      .to(exitP, { y: -6.5, f: 1, duration: 0.12, ease: 'power1.in' }, 0.88);
+      /* 1: instagram -> wordpress | swap lands on a full turn (0.24) */
+      .to(spinProxy, { y: '+=360', duration: 0.1, ease: 'power2.in', onUpdate: applySpin }, 0.14)
+      .to(blurProxy, { v: 10, duration: 0.08, ease: 'power2.in', onUpdate: applyBlur }, 0.18)
+      .to(iconScale, { v: 0.02, duration: 0.08, ease: 'power2.in' }, 0.18)
+      .to(spinProxy, { y: '+=360', duration: 0.14, ease: 'power2.out', onUpdate: applySpin }, 0.24)
+      .to(blurProxy, { v: 0, duration: 0.16, ease: 'power2.out', onUpdate: applyBlur }, 0.24)
+      .to(iconScale, { v: 1, duration: 0.16, ease: 'back.out(1.7)' }, 0.25)
+      /* 2: wordpress -> seo | swap at 0.52 */
+      .to(spinProxy, { y: '+=360', duration: 0.1, ease: 'power2.in', onUpdate: applySpin }, 0.42)
+      .to(blurProxy, { v: 10, duration: 0.08, ease: 'power2.in', onUpdate: applyBlur }, 0.46)
+      .to(iconScale, { v: 0.02, duration: 0.08, ease: 'power2.in' }, 0.46)
+      .to(spinProxy, { y: '+=360', duration: 0.14, ease: 'power2.out', onUpdate: applySpin }, 0.52)
+      .to(blurProxy, { v: 0, duration: 0.16, ease: 'power2.out', onUpdate: applyBlur }, 0.52)
+      .to(iconScale, { v: 1, duration: 0.16, ease: 'back.out(1.7)' }, 0.53)
+      /* 3: seo -> billboard | swap at 0.80 */
+      .to(spinProxy, { y: '+=360', duration: 0.1, ease: 'power2.in', onUpdate: applySpin }, 0.7)
+      .to(blurProxy, { v: 10, duration: 0.08, ease: 'power2.in', onUpdate: applyBlur }, 0.74)
+      .to(iconScale, { v: 0.02, duration: 0.08, ease: 'power2.in' }, 0.74)
+      .to(spinProxy, { y: '+=360', duration: 0.13, ease: 'power2.out', onUpdate: applySpin }, 0.8)
+      .to(blurProxy, { v: 0, duration: 0.14, ease: 'power2.out', onUpdate: applyBlur }, 0.8)
+      .to(iconScale, { v: 1, duration: 0.14, ease: 'back.out(1.7)' }, 0.81)
+      .to('.hero-content', { y: 90, autoAlpha: 0.15, duration: 0.08, ease: 'power1.in' }, 0.91)
+      .to(exitP, { y: -6.5, f: 1, duration: 0.08, ease: 'power1.in' }, 0.91);
   }
 
   /* ---------- resize & scroll ---------- */

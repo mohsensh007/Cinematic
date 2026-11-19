@@ -27,6 +27,7 @@
 
 body.theme-instagram{--bg-inner:#3a1152;--bg-mid:#190a31;--bg-outer:#070410}
 body.theme-wordpress{--bg-inner:#0d3a5c;--bg-mid:#07203a;--bg-outer:#03070d}
+body.theme-seo{--bg-inner:#0a2f45;--bg-mid:#05141f;--bg-outer:#02070c}
 body.theme-billboard{--bg-inner:#420c18;--bg-mid:#20050d;--bg-outer:#0b0205}
 
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -156,7 +157,7 @@ html:not(.js) .walk-item{opacity:1;visibility:visible}
 .award-subtitle{font-size:.85rem;font-weight:700}
 .hero-right{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;text-align:right;padding:2rem 0;z-index:5;width:430px;pointer-events:none}
 .product-carousel{display:flex;flex-direction:column;gap:1.4rem;align-items:flex-end;pointer-events:auto}
-.carousel-cards{display:flex;gap:.8rem}
+.carousel-cards{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.8rem}
 .card{background:var(--surface);border:1px solid var(--line);padding:1rem;padding-top:4.2rem;border-radius:28px;display:flex;flex-direction:column;align-items:center;gap:1rem;transition:all .4s cubic-bezier(.175,.885,.32,1.275);width:135px;position:relative;backdrop-filter:blur(10px);text-align:center}
 .card:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}
 .card.active{border-color:#fbcfe8}
